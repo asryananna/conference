@@ -3,9 +3,9 @@ package com.example.conference.service;
 import com.example.conference.controller.dto.room.RoomDto;
 import com.example.conference.controller.dto.room.RoomResponseDto;
 import com.example.conference.controller.dto.room.RoomUpdateDto;
-import com.example.conference.dao.model.Conference;
-import com.example.conference.dao.model.Room;
-import com.example.conference.dao.model.RoomAvailability;
+import com.example.conference.dao.document.Conference;
+import com.example.conference.dao.document.Room;
+import com.example.conference.dao.document.RoomAvailability;
 import com.example.conference.dao.repository.ConferenceRepository;
 import com.example.conference.dao.repository.RoomRepository;
 import com.example.conference.exception.DocumentNotFoundException;
@@ -40,11 +40,19 @@ public class RoomService {
     }
 
     public RoomResponseDto saveRoom(RoomDto roomDto) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("RoomService.saveRoom method has been called");
+        }
+
         Room room = roomRepository.save(commonMapper.dtoToDao(roomDto));
         return commonMapper.daoToRoomResponseDto(room);
     }
 
     public RoomResponseDto updateRoom(RoomUpdateDto roomUpdateDto, String roomId) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("RoomService.updateRoom method has been called. roomId: " + roomId);
+        }
+
         Optional<Room> roomById = roomRepository.findById(roomId);
         if (roomById.isPresent()) {
             Room room = roomById.get();
@@ -57,6 +65,11 @@ public class RoomService {
     }
 
     public RoomResponseDto bookRoomByEventDate(String roomId, Integer requestedSeatsCount, LocalDateTime eventDate) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("RoomService.bookRoomByEventDate method has been called. roomId: %s, requestedSeatsCount: %d, eventDate: %s",
+                    roomId, requestedSeatsCount, eventDate));
+        }
+
         Room room = roomRepository.findByIdAndSeatsCountIsGreaterThanEqual(roomId, requestedSeatsCount)
                 .orElseThrow(() -> new DocumentNotFoundException(
                         String.format("Could not find the room with requested properties. Id:%s, seats count:%d, status:%s",
@@ -68,7 +81,13 @@ public class RoomService {
     }
 
     public RoomResponseDto bookRoomByConferenceId(String roomId, String conferenceId) {
-        Conference conference = conferenceRepository.findById(conferenceId).orElseThrow(() -> new DocumentNotFoundException("There is no conference with id:" + conferenceId));
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("RoomService.bookRoomByConferenceId method has been called. roomId :%s, conferenceId:%s",
+                    roomId, conferenceId));
+        }
+
+        Conference conference = conferenceRepository.findById(conferenceId)
+                .orElseThrow(() -> new DocumentNotFoundException("There is no conference with id:" + conferenceId));
 
         Room room = roomRepository.findByIdAndSeatsCountIsGreaterThanEqual(roomId, conference.getRequestedSeatsCount())
                 .orElseThrow(() -> new DocumentNotFoundException(
@@ -79,6 +98,7 @@ public class RoomService {
 
         checkDateAvailability(room, commonMapper.fromBsonTimestamp(conference.getEventDate()));
         if (conference.getRoom() != null) {
+            LOGGER.info(String.format("Canceling the previous booked room for the conference. roomIdL:%s", roomId));
             cancelBooking(conference.getRoom(), conference.getEventDate());
         }
         bookRoom(room, eventualDateTime);
@@ -91,6 +111,10 @@ public class RoomService {
 
     public List<RoomResponseDto> checkRoomsAvailabilityByRequestedProp(Integer requestedSeatsCount, LocalDateTime eventDate) {
         List<Room> roomList = roomRepository.findBySeatsCountIsGreaterThanEqual(requestedSeatsCount);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("RoomService.checkRoomsAvailabilityByRequestedProp method has been called");
+        }
+
         if (roomList.isEmpty()) {
             throw new DocumentNotFoundException(
                     String.format("Could not find any room with requested properties. seats count:%d, status:%s",
@@ -123,6 +147,11 @@ public class RoomService {
     }
 
     private boolean checkDateAvailability(Room room, LocalDateTime eventDate) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("RoomService.checkDateAvailability method has been called for the room. roomId: %s, eventDate: %s",
+                    room.getId(), eventDate));
+        }
+
         if (room.getRoomAvailability() != null) {
             for (RoomAvailability roomAvailability : room.getRoomAvailability()) {
                 if (roomAvailability.getEventDate().equals(commonMapper.toBsonTimestamp(eventDate))) {
@@ -135,6 +164,10 @@ public class RoomService {
     }
 
     public void cancelBooking(Room room, BsonTimestamp bookDate) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("RoomService.cancelBooking method has been called. roomId: %s, bookDate: %s",
+                    room.getId(), commonMapper.fromBsonTimestamp(bookDate)));
+        }
         RoomAvailability roomAvailability = room.getRoomAvailability()
                 .stream()
                 .filter(availability -> availability.getEventDate().equals(bookDate))

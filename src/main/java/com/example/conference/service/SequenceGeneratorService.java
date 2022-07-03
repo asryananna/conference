@@ -1,6 +1,6 @@
 package com.example.conference.service;
 
-import com.example.conference.dao.model.DatabaseSequence;
+import com.example.conference.dao.document.DatabaseSequence;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;

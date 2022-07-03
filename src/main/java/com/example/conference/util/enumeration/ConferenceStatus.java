@@ -4,6 +4,7 @@ public enum ConferenceStatus {
     SCHEDULED,
 
     ACTIVE,
+
     CANCELED;
 
     public static ConferenceStatus findByName(String name) {

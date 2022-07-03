@@ -1,7 +1,7 @@
 package com.example.conference.controller;
 
 import com.example.conference.controller.dto.error.ErrorResponseDto;
-import com.example.conference.util.ErrorConstants;
+import com.example.conference.util.enumeration.ErrorConstants;
 import com.example.conference.util.enumeration.ErrorType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +35,7 @@ public class RestErrorController extends AbstractErrorController {
 
         HttpStatus status = getStatus(request);
         ErrorResponseDto errorResponse = new ErrorResponseDto(String.valueOf(status.value()),
-                ErrorConstants.INVALID_REQUEST_ERROR_TITLE, errorMessage, LocalDateTime.now().toString(),
+                ErrorConstants.INVALID_REQUEST_ERROR_TITLE.name(), errorMessage, LocalDateTime.now().toString(),
                 ErrorType.INVALID_REQUEST_ERROR);
         return new ResponseEntity<>(errorResponse, status);
     }

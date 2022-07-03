@@ -2,6 +2,7 @@ package com.example.conference.util.enumeration;
 
 public enum RoomStatus {
     FREE,
+
     BOOKED;
 
     public static RoomStatus findByName(String name) {

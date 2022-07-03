@@ -1,8 +1,8 @@
 package com.example.conference;
 
 import com.example.conference.constants.TestConstants;
-import com.example.conference.dao.model.Conference;
-import com.example.conference.dao.model.Participant;
+import com.example.conference.dao.document.Conference;
+import com.example.conference.dao.document.Participant;
 import com.example.conference.dao.repository.ConferenceRepository;
 import com.example.conference.util.enumeration.ConferenceStatus;
 import io.restassured.http.ContentType;

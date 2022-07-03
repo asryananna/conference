@@ -1,4 +1,4 @@
-package com.example.conference.dao.model;
+package com.example.conference.dao.document;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -55,7 +55,10 @@ public class Participant {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Participant that = (Participant) o;
-        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(age, that.age) && Objects.equals(gender, that.gender) && Objects.equals(residence, that.residence) && Objects.equals(companyName, that.companyName) && Objects.equals(specialization, that.specialization) && Objects.equals(motivation, that.motivation) && Objects.equals(invitedBy, that.invitedBy);
+        return Objects.equals(id, that.id) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName)
+                && Objects.equals(age, that.age) && Objects.equals(gender, that.gender) && Objects.equals(residence, that.residence)
+                && Objects.equals(companyName, that.companyName) && Objects.equals(specialization, that.specialization)
+                && Objects.equals(motivation, that.motivation) && Objects.equals(invitedBy, that.invitedBy);
     }
 
     @Override

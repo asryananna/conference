@@ -2,7 +2,7 @@ package com.example.conference.util.mapper;
 
 import com.example.conference.controller.dto.conference.*;
 import com.example.conference.controller.dto.room.*;
-import com.example.conference.dao.model.*;
+import com.example.conference.dao.document.*;
 import org.bson.BsonTimestamp;
 import org.mapstruct.*;
 

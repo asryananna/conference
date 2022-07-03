@@ -5,14 +5,16 @@ import com.example.conference.controller.dto.conference.ConferenceResponseDto;
 import com.example.conference.controller.dto.conference.ConferenceUpdateDto;
 import com.example.conference.controller.dto.conference.ParticipantDto;
 import com.example.conference.controller.dto.room.RoomResponseDto;
-import com.example.conference.dao.model.Conference;
-import com.example.conference.dao.model.Participant;
+import com.example.conference.dao.document.Conference;
+import com.example.conference.dao.document.Participant;
 import com.example.conference.dao.repository.ConferenceRepository;
 import com.example.conference.dao.repository.RoomRepository;
 import com.example.conference.exception.DocumentNotFoundException;
 import com.example.conference.exception.InvalidInputException;
 import com.example.conference.util.enumeration.ConferenceStatus;
 import com.example.conference.util.mapper.CommonMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -21,6 +23,7 @@ import java.util.Optional;
 
 @Service
 public class ConferenceService {
+    private static final Logger LOGGER = LogManager.getLogger(ConferenceService.class);
     private final ConferenceRepository conferenceRepository;
 
     private final RoomRepository roomRepository;
@@ -40,6 +43,10 @@ public class ConferenceService {
     }
 
     public ConferenceResponseDto saveConference(ConferenceDto conferenceDto) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("ConferenceService.saveConference method has been called");
+        }
+
         Conference conference = commonMapper.dtoToDao(conferenceDto);
         conference.setStatus(ConferenceStatus.SCHEDULED.name());
         if (conferenceDto.getRoomId() != null && !conferenceDto.getRoomId().isEmpty()) {
@@ -53,6 +60,10 @@ public class ConferenceService {
     }
 
     public ConferenceResponseDto updateConference(ConferenceUpdateDto conferenceUpdateDto, String conferenceId) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("ConferenceService.updateConference method has been called. conferenceId: %s", conferenceId));
+        }
+
         validateStatus(conferenceUpdateDto);
 
         Optional<Conference> byId = conferenceRepository.findById(conferenceId);
@@ -67,11 +78,19 @@ public class ConferenceService {
     }
 
     public List<ConferenceResponseDto> getAllConferences() {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("ConferenceService.getAllConferences method has been called");
+        }
+
         List<Conference> conferences = conferenceRepository.findAll();
         return commonMapper.daoListToConferenceResponseDtoList(conferences);
     }
 
     private void validateStatus(ConferenceUpdateDto conferenceUpdateDto) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("ConferenceService.validateStatus method has been called");
+        }
+
         if (conferenceUpdateDto.getStatus() != null && (conferenceUpdateDto.getStatus().isEmpty() || ConferenceStatus.findByName(conferenceUpdateDto.getStatus()) == null)) {
             throw new InvalidInputException(String.format("Given conference status is invalid:%s. Valid statuses are:%s",
                     conferenceUpdateDto.getStatus(), Arrays.toString(ConferenceStatus.values())));
@@ -79,6 +98,10 @@ public class ConferenceService {
     }
 
     public ConferenceResponseDto addParticipant(ParticipantDto participantDto, String conferenceId) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("ConferenceService.addParticipant method has been called. conferenceId:%s", conferenceId));
+        }
+
         Conference conference = conferenceRepository.findById(conferenceId).orElseThrow(() -> new DocumentNotFoundException(
                 String.format("No Conference found for id: %sCould not add a participant for the conference", conferenceId)));
 
@@ -97,6 +120,11 @@ public class ConferenceService {
     }
 
     public ConferenceResponseDto removeParticipant(Long participantId, String conferenceId) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug(String.format("ConferenceService.removeParticipant method has been called. conferenceId: %s,participantId: %d",
+                    conferenceId, participantId));
+        }
+
         Conference conference = conferenceRepository.findById(conferenceId).orElseThrow(() -> new DocumentNotFoundException(
                 String.format("No Conference found for id: %sCould not add a participant for the conference", conferenceId)));
 

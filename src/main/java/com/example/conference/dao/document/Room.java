@@ -1,4 +1,4 @@
-package com.example.conference.dao.model;
+package com.example.conference.dao.document;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

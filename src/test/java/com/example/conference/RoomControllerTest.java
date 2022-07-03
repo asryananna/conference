@@ -1,8 +1,8 @@
 package com.example.conference;
 
 import com.example.conference.constants.TestConstants;
-import com.example.conference.dao.model.Conference;
-import com.example.conference.dao.model.Room;
+import com.example.conference.dao.document.Conference;
+import com.example.conference.dao.document.Room;
 import com.example.conference.dao.repository.ConferenceRepository;
 import com.example.conference.dao.repository.RoomRepository;
 import com.example.conference.util.enumeration.ConferenceStatus;

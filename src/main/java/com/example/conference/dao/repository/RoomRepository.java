@@ -1,6 +1,6 @@
 package com.example.conference.dao.repository;
 
-import com.example.conference.dao.model.Room;
+import com.example.conference.dao.document.Room;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
